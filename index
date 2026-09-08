@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>اختبار - مسابقة الجمارك الموريتانية</title>
+  <!-- Font Awesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* -------------------- RESET & BASE -------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Tahoma', system-ui, sans-serif;
+    }
+
+    body {
+      background: #f4f7fc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app-container {
+      max-width: 920px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      padding: 28px 32px 40px;
+      transition: all 0.2s ease;
+      border-left: 6px solid #6d28d9;
+    }
+
+    /* -------------------- EN-TÊTE -------------------- */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      border-bottom: 2px solid #e9edf4;
+      padding-bottom: 18px;
+      margin-bottom: 26px;
+    }
+
+    .header h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #0b2b4a, #1e4b6e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .badge-exam {
+      background: #1e293b;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .badge-exam i {
+      font-size: 1rem;
+      color: #facc15;
+    }
+
+    /* -------------------- BARRE DE PROFIL / MODE -------------------- */
+    .mode-selector {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .mode-btn {
+      flex: 1 1 140px;
+      padding: 12px 8px;
+      border: 2px solid #dde3ed;
+      border-radius: 60px;
+      background: white;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .mode-btn i {
+      font-size: 1.2rem;
+    }
+
+    .mode-btn.active-controleur {
+      background: #6d28d9;
+      border-color: #6d28d9;
+      color: white;
+      box-shadow: 0 6px 14px rgba(109, 40, 217, 0.35);
+    }
+
+    .mode-btn.active-inspecteur {
+      background: #0b6b9e;
+      border-color: #0b6b9e;
+      color: white;
+      box-shadow: 0 6px 14px rgba(11, 107, 158, 0.35);
+    }
+
+    .mode-btn:not(.active-controleur):not(.active-inspecteur):hover {
+      background: #f0f4fe;
+      border-color: #a0b8d9;
+    }
+
+    /* -------------------- INFOS SESSION -------------------- */
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #f8faff;
+      padding: 12px 18px;
+      border-radius: 60px;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+      border: 1px solid #e6ecf5;
+    }
+
+    .info-bar .question-counter {
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .info-bar .score {
+      background: #1e293b;
+      color: white;
+      padding: 4px 18px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .info-bar .score i {
+      margin-left: 8px;
+      color: #facc15;
+    }
+
+    /* -------------------- ZONE QUESTION -------------------- */
+    .question-box {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 24px 20px 16px;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03);
+      border: 1px solid #eef2f8;
+      margin-bottom: 24px;
+    }
+
+    .question-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: #0b1e2f;
+      margin-bottom: 24px;
+      padding-right: 4px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #fafcff;
+      border: 2px solid #e2eaf3;
+      border-radius: 18px;
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: 0.18s;
+      font-size: 1.05rem;
+    }
+
+    .option-item:hover:not(.disabled-opt) {
+      background: #f0f6ff;
+      border-color: #b6cbe5;
+      transform: scale(1.003);
+    }
+
+    .option-item.selected-correct {
+      border-color: #16a34a;
+      background: #ecfdf5;
+    }
+
+    .option-item.selected-wrong {
+      border-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .option-item.disabled-opt {
+      opacity: 0.85;
+      cursor: default;
+    }
+
+    .option-item .letter {
+      font-weight: 700;
+      color: #4b6589;
+      min-width: 28px;
+      font-size: 1.1rem;
+    }
+
+    .option-item .text {
+      flex: 1;
+    }
+
+    .option-item .icon-result {
+      font-size: 1.4rem;
+      margin-right: auto;
+    }
+
+    /* -------------------- BOUTONS ACTION -------------------- */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .actions .left-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      background: #eef2f8;
+      padding: 10px 22px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1e293b;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .btn-primary {
+      background: #1e3b5a;
+      color: white;
+      box-shadow: 0 6px 14px rgba(30, 59, 90, 0.25);
+    }
+    .btn-primary:hover {
+      background: #0f2a44;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: #16a34a;
+      color: white;
+      box-shadow: 0 6px 14px rgba(22, 163, 74, 0.25);
+    }
+    .btn-success:hover {
+      background: #15803d;
+      transform: translateY(-2px);
+    }
+
+    .btn-warning {
+      background: #eab308;
+      color: #1e293b;
+      box-shadow: 0 6px 14px rgba(234, 179, 8, 0.25);
+    }
+    .btn-warning:hover {
+      background: #ca9a04;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #d0dbea;
+    }
+    .btn-outline:hover {
+      background: #f0f5ff;
+      border-color: #a0b8d9;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      transform: none !important;
+    }
+
+    /* -------------------- PIED DE PAGE & MENTIONS -------------------- */
+    .footer-meta {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 2px solid #ecf1f8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: #5d738b;
+    }
+
+    .footer-meta .author {
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-meta .author i {
+      color: #1e3b5a;
+    }
+
+    .footer-meta .whatsapp {
+      background: #25D366;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* -------------------- RESPONSIVE -------------------- */
+    @media (max-width: 640px) {
+      .app-container { padding: 16px; }
+      .header h1 { font-size: 1.5rem; }
+      .question-text { font-size: 1.1rem; }
+      .option-item { padding: 12px 16px; font-size: 0.95rem; }
+      .actions .left-group { width: 100%; }
+      .btn { flex: 1 1 auto; justify-content: center; }
+      .info-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+    }
+
+    /* style pour la carte de progression */
+    .progress-indicator {
+      background: #e9eef6;
+      border-radius: 60px;
+      height: 8px;
+      margin: 8px 0 16px;
+      width: 100%;
+      overflow: hidden;
+    }
+    .progress-indicator .fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      border-radius: 60px;
+      transition: width 0.3s ease;
+    }
+
+    /* message de fin */
+    .finish-message {
+      text-align: center;
+      padding: 30px 10px;
+    }
+    .finish-message i {
+      font-size: 3rem;
+      color: #16a34a;
+      margin-bottom: 14px;
+    }
+    .finish-message h2 {
+      color: #0b2b4a;
+    }
+
+    /* couleur diffuse */
+    .bg-purple-light { background: #f5f0ff; }
+    .bg-blue-light { background: #f0f7ff; }
+  </style>
+</head>
+<body>
+<div class="app-container" id="appContainer">
+  <!-- EN-TÊTE -->
+  <div class="header">
+    <h1><i class="fas fa-gavel" style="color:#6d28d9; -webkit-text-fill-color: #6d28d9; margin-left: 12px;"></i>اختبار الضرائب</h1>
+    <span class="badge-exam"><i class="fas fa-star"></i> مسابقة 2026</span>
+  </div>
+
+  <!-- SELECTEUR MODE -->
+  <div class="mode-selector">
+    <button class="mode-btn active-controleur" data-mode="controleur" id="modeControleur">
+      <i class="fas fa-user-tie"></i> مراقب
+    </button>
+    <button class="mode-btn" data-mode="inspecteur" id="modeInspecteur">
+      <i class="fas fa-user-graduate"></i> مفتش
+    </button>
+  </div>
+
+  <!-- BARRE INFOS -->
+  <div class="info-bar">
+    <span class="question-counter" id="questionCounter"><i class="far fa-file-alt"></i> سؤال 1 / 20</span>
+    <span class="score" id="scoreDisplay"><i class="fas fa-star"></i> 0.00 نقطة</span>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-indicator">
+    <div class="fill" id="progressFill" style="width: 0%;"></div>
+  </div>
+
+  <!-- ZONE QUESTION -->
+  <div id="questionZone">
+    <!-- le contenu est injecté par JS -->
+  </div>
+
+  <!-- BOUTONS -->
+  <div class="actions">
+    <div class="left-group">
+      <button class="btn btn-outline" id="resetBtn"><i class="fas fa-undo-alt"></i> إعادة تعيين</button>
+      <button class="btn btn-warning" id="resultBtn"><i class="fas fa-chart-simple"></i> النتيجة</button>
+    </div>
+    <div>
+      <button class="btn btn-primary" id="nextBtn"><i class="fas fa-arrow-left"></i> التالي</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-meta">
+    <span class="author"><i class="fas fa-user-edit"></i> الأستاذ يحيى طالب عبد اللهي</span>
+    <a href="tel:+22230545727" class="whatsapp"><i class="fab fa-whatsapp"></i> 30545727</a>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // -------------------- BASE DE DONNÉES DES QUESTIONS (traduite en arabe) --------------------
+    // Les questions sont maintenant en arabe pour une immersion totale.
+    const questionBank = [];
+
+    function q(question, options, correctIndex, difficulty = 'moyen') {
+      return { question, options, correctIndex, difficulty };
+    }
+
+    // =================== QUESTIONS CONTRÔLEUR (100) ===================
+    const controleurQuestions = [
+      q('ما هو تاريخ تطبيق القانون الضريبي الموريتاني (قانون 2019-018)؟',
+        ['29 أبريل 2019', '1 يناير 2020', '1 يناير 2021', '31 مارس 2020'], 1),
+      q('ما هي الضريبة التي حلت محل الضريبة على الأرباح الصناعية والتجارية للشركات؟',
+        ['ضريبة القيمة المضافة', 'الضريبة على الدخل', 'الضريبة على الشركات', 'الضريبة على النشاط المهني'], 2),
+      q('ما هو المعدل العادي للضريبة على الشركات؟',
+        ['15%', '20%', '25%', '30%'], 2),
+      q('في نظام الضريبة على الشركات، ما هو المعدل البديل على الوعاء الضريبي؟',
+        ['1%', '2%', '2.5%', '5%'], 1),
+      q('ما هو الحد الأدنى للضريبة على الشركات في النظام الحقيقي؟',
+        ['50,000 أوقية', '75,000 أوقية', '100,000 أوقية', '125,000 أوقية'], 2),
+      q('حد رقم الأعمال باستثناء الضريبة للخضوع للنظام الحقيقي العادي للضريبة على الدخل؟',
+        ['> 3 ملايين أوقية', '> 5 ملايين أوقية', '> 10 ملايين أوقية', '> 30 مليون أوقية'], 1),
+      q('معدل الضريبة على الدخل في النظام الحقيقي العادي على الربح؟',
+        ['20%', '25%', '30%', '40%'], 2),
+      q('المعدل التقديري للضريبة على الدخل في النظام التقديري؟',
+        ['2% من رقم الأعمال', '2.5% من رقم الأعمال', '3% من رقم الأعمال', '5% من رقم الأعمال'], 2),
+      q('معدل الضريبة على الأجور للأجر الشهري ≤ 9,000 أوقية؟',
+        ['10%', '15%', '25%', '40%'], 1),
+      q('معدل الضريبة على الأجور للأجر > 21,000 أوقية؟',
+        ['25%', '30%', '40%', '50%'], 2),
+      q('المعدل العام لضريبة القيمة المضافة؟',
+        ['14%', '16%', '18%', '20%'], 1),
+      q('معدل ضريبة القيمة المضافة للاتصالات؟',
+        ['16%', '18%', '20%', '25%'], 1),
+      q('معدل ضريبة القيمة المضافة للصادرات؟',
+        ['0%', '5%', '10%', '16%'], 0),
+      q('يعتمد المراقبة الضريبية المستندية على:',
+        ['إقرارات شفهية', 'القوائم المالية وعمليات التدقيق', 'استطلاعات رأي', 'أسعار دولية'], 1),
+      q('تاريخ تقديم الإقرارات السنوية؟',
+        ['31 يناير', '28 فبراير', '31 مارس', '30 يونيو'], 2),
+      q('نوع آخر من المراقبة الضريبية:',
+        ['مراقبة ميدانية', 'مراقبة جمركية', 'مراقبة بنكية', 'مراقبة دبلوماسية'], 0),
+      q('مدة التقادم للمراقبة الضريبية؟',
+        ['سنتان', '3 سنوات', '5 سنوات', '10 سنوات'], 1),
+      q('غرامات الاستدعاء:',
+        ['5% إلى 10%', '10% إلى 20%', '25% إلى 80%', '80% إلى 100%'], 2),
+      q('نظام للمؤسسات ذات إمكانات تصديرية عالية (سابق)؟',
+        ['منطقة حرة', 'نظام عائلي', 'نظام أجور', 'نظام زراعي'], 0),
+      q('هدف مدونة الاستثمار الجديدة 2025:',
+        ['حظر المناطق الحرة', 'إلغاء الاستثمار الأجنبي', 'تشجيع الاستثمارات', 'استبدال القانون الضريبي'], 2),
+      q('مدونة الاستثمار الجديدة تستثني:',
+        ['الرقمنة', 'الزراعة', 'المناجم والمحروقات', 'اللوجستيك'], 2),
+      q('ماذا يعني اختصار RIB؟',
+        ['نظام الاستيراد الأساسي', 'النظام الأساسي التحفيزي', 'النظام المصرفي الدولي', 'نظام الضرائب المصرفية'], 1),
+      q('كم عدد الأنظمة التفضيلية في مدونة الاستثمار الجديدة؟',
+        ['اثنان', 'ثلاثة', 'أربعة', 'خمسة'], 1),
+      q('استثمار المؤسسات الصغيرة والمتوسطة في RIB:',
+        ['1-2 مليون أوقية', '2-30 مليون أوقية', '30-100 مليون أوقية', '>200 مليون أوقية'], 1),
+      q('الحد الأدنى لعدد الوظائف للمؤسسات الصغيرة والمتوسطة في RIB:',
+        ['2', '5', '10', '15'], 1),
+      q('الرسوم الجمركية للمؤسسات الصغيرة والمتوسطة في RIB:',
+        ['0.5%', '1.5%', '3%', '5%'], 2),
+      q('يتم إنشاء RPD بموجب:',
+        ['قرار من المكلف', 'مرسوم من مجلس الوزراء', 'عقد شفهي', 'فاتورة تجارية'], 1),
+      q('معدل الضريبة على الشركات في RPD:',
+        ['10%', '12%', '15%', '25%'], 2),
+      q('الرسوم الجمركية في RIS:',
+        ['0%', '1%', '1.5%', '3%'], 2),
+      q('الحد الأدنى للاستثمار في RIS:',
+        ['50 مليون أوقية', '100 مليون أوقية', '200 مليون أوقية', '500 مليون أوقية'], 2),
+      q('الحد الأدنى لعدد الوظائف في RIS:',
+        ['20', '30', '50', '100'], 2),
+      q('ميزة التكوين في RPD:',
+        ['50% بحد أقصى 100,000', '70% بحد أقصى 400,000', '80% بدون حد', '100% بحد أقصى 200,000'], 1),
+      q('ميزة التكوين في RIS:',
+        ['50% بحد أقصى 400,000', '70% بحد أقصى 800,000', '80% بدون حد', '100% بحد أقصى 200,000'], 1),
+      q('يجب على الشركات المعتمدة في المنطقة الحرة:',
+        ['الاحتفاظ بمحاسبة مطابقة', 'وقف أي محاسبة', 'الإعفاء من أي التزام', 'عدم تقديم أي إقرار'], 0),
+      q('الحسابات الخاصة بالمنطقة الحرة:',
+        ['حساب واحد', 'حسابات بنكية فقط', 'خاصة بالنشاط المؤهل', 'بالعملات الأجنبية حصريًا'], 2),
+      q('الرسوم السنوية للمنطقة الحرة:',
+        ['0.1% من رقم الأعمال', '0.5% من رقم الأعمال', '1% من رقم الأعمال', '2% من رقم الأعمال'], 1),
+      q('حرية الصرف في المنطقة الحرة:',
+        ['ممنوعة', 'جزئية', 'كاملة للعمليات المعنية', 'مخصصة للبنوك'], 2),
+      q('القانون الذي أدخل مدونة الهيدروجين الأخضر:',
+        ['2020-019', '2022-037', '2024-037', '2025-006'], 2),
+      q('قبل رخصة استغلال الهيدروجين الأخضر، يجب:',
+        ['رخصة تجارية', 'اتفاقية إطارية ثم شاملة', 'فاتورة ضريبية', 'تصريح بنكي'], 1),
+      q('المدة القصوى للاتفاقية الشاملة للهيدروجين:',
+        ['25 سنة', '35 سنة', '50 سنة', '15 سنة'], 1),
+      // Calculs simples
+      q('STR: كتلة الأجور التقديرية = 10% من رقم الأعمال. رقم الأعمال = 4 ملايين أوقية؟',
+        ['360,000', '400,000', '440,000', '480,000'], 1),
+      q('ضريبة القيمة المضافة 16% على 20 مليون أوقية:',
+        ['2.88 مليون', '3.20 مليون', '3.52 مليون', '2.24 مليون'], 1),
+      q('STR: الضريبة على الشركات = 4% من رقم الأعمال. رقم الأعمال = 5 ملايين أوقية؟',
+        ['180,000', '200,000', '220,000', '160,000'], 1),
+      q('STR: الضريبة على الشركات = 4% من رقم الأعمال. رقم الأعمال = 3 ملايين أوقية؟',
+        ['96,000', '120,000', '144,000', '84,000'], 1),
+      q('الضريبة على الدخل التقديرية 3% على رقم الأعمال = 200,000 أوقية؟',
+        ['4,000', '5,000', '6,000', '7,000'], 2),
+      q('الضريبة على الشركات 25% على ربح 3 ملايين أوقية:',
+        ['600,000', '675,000', '750,000', '825,000'], 2),
+      q('ضريبة القيمة المضافة 16% على 8 ملايين أوقية:',
+        ['1.28 مليون', '1.408 مليون', '1.536 مليون', '896,000'], 0),
+      q('الضريبة على الشركات 25% على ربح 10 ملايين أوقية:',
+        ['2 مليون', '2.25 مليون', '2.5 مليون', '3.25 مليون'], 2),
+      q('STR: كتلة الأجور 10% على رقم الأعمال = 500,000 أوقية:',
+        ['40,000', '45,000', '50,000', '60,000'], 2),
+      q('الضريبة على الدخل التقديرية 3% على رقم الأعمال = 1 مليون أوقية:',
+        ['24,000', '27,000', '30,000', '36,000'], 2),
+    ];
+
+    // =================== QUESTIONS INSPECTEUR (180 en mélange) ===================
+    const inspecteurQuestions = [
+      ...controleurQuestions.slice(0, 80),
+      q('ينتج الربح المحاسبي عن:',
+        ['الإيرادات - المصروفات', 'الديون - النقدية', 'الأصول الثابتة - رأس المال', 'الأصول - المبيعات'], 0),
+      q('الأصل الثابت هو:',
+        ['أصل مخصص للاستخدام الدائم', 'ضريبة', 'غرامة', 'دين قصير الأجل'], 0),
+      q('التضخم يعني:',
+        ['ارتفاع عام ومستدام في الأسعار', 'ارتفاع الصادرات', 'انخفاض الضرائب', 'ارتفاع سعر منتج واحد'], 0),
+      q('ميزانية الدولة تعكس:',
+        ['الإيرادات والنفقات العامة المخطط لها', 'الحسابات الشخصية', 'أرباح البنوك', 'مبيعات الأسر'], 0),
+      q('ضريبة القيمة المضافة هي ضريبة:',
+        ['مباشرة', 'غير مباشرة', 'على الثروة', 'طوعية'], 1),
+      q('الدين يشكل:',
+        ['التزام تجاه الغير', 'إيراد ضريبي', 'ربح', 'منتج'], 0),
+      q('الرقابة الداخلية تهدف إلى:',
+        ['تقليل مخاطر الأخطاء والاحتيال', 'إنشاء النقود', 'إلغاء المحاسبة', 'تحديد الأسعار'], 0),
+      q('تستخدم الميزانية المحاسبية للتحقق من:',
+        ['توازن المدين والدائن', 'استبدال الميزانية العمومية', 'احتساب ضريبة القيمة المضافة', 'تحديد الحد الأدنى للأجور'], 0),
+      q('مبدأ شرعية الضريبة:',
+        ['تحدد الضريبة بموجب القانون', 'يختار المكلف معدله', 'يحدد المفتش ضريبة بحرية', 'يحدد البنك الضريبة'], 0),
+      q('معدل الضريبة على الدخل:',
+        ['5%', '10%', '15%', '20%'], 1),
+      q('ضريبة التكوين المهني:',
+        ['0.6%', '1%', '2%', '5%'], 0),
+      q('الضريبة على العمليات المالية:',
+        ['10%', '14%', '16%', '18%'], 1),
+      q('الاقتطاع من المصدر على خدمات غير المقيمين:',
+        ['10%', '15%', '20%', '25%'], 1),
+      q('الاقتطاع من المصدر على خدمات المقيمين (الحرّيين):',
+        ['1%', '2%', '2.5%', '5%'], 2),
+      q('مدونة الاستثمار 2025 (رقم القانون):',
+        ['2024-030', '2025-006', '2024-037', '2022-037'], 1),
+      q('عدد الأنظمة التفضيلية في مدونة الاستثمار:',
+        ['2', '3', '4', '5'], 1),
+      q('يتضمن RIB الفئات:',
+        ['المؤسسات الصغيرة والمتوسطة والمتوسطة', 'كبيرة وصغيرة', 'وطنية وأجنبية', 'زراعية وصناعية'], 0),
+      q('استثمار الفئة المتوسطة في RIB:',
+        ['2-30 مليون', '30-200 مليون', '200-500 مليون', '>500 مليون'], 1),
+      q('وظائف الفئة المتوسطة في RIB:',
+        ['5', '10', '15', '20'], 2),
+      q('الرسوم الجمركية للفئة المتوسطة في RIB:',
+        ['2%', '3%', '5%', '10%'], 2),
+      q('ضريبة القيمة المضافة المخفضة للفئة المتوسطة في RIB:',
+        ['5%', '10%', '15%', '16%'], 1),
+      q('يتم إنشاء RPD بموجب:',
+        ['قرار من المكلف', 'مرسوم من مجلس الوزراء', 'عقد شفهي', 'فاتورة'], 1),
+      q('الحد الأدنى للاستثمار في RPD:',
+        ['1 مليون', '2 مليون', '5 ملايين', '10 ملايين'], 1),
+      q('الحد الأدنى لعدد الوظائف في RPD:',
+        ['3', '5', '10', '15'], 1),
+      q('معدل الضريبة على الشركات في RPD:',
+        ['10%', '12%', '15%', '25%'], 2),
+      q('ميزة التكوين في RPD:',
+        ['50% بحد أقصى 100,000', '70% بحد أقصى 400,000', '80% بدون حد', '100% بحد أقصى 200,000'], 1),
+      q('الحد الأدنى للاستثمار في RIS:',
+        ['100 مليون', '200 مليون', '500 مليون', '30 مليون'], 1),
+      q('الحد الأدنى لعدد الوظائف في RIS:',
+        ['20', '30', '50', '100'], 2),
+      q('الرسوم الجمركية في RIS:',
+        ['0%', '1%', '1.5%', '3%'], 2),
+      q('ميزة التكوين في RIS:',
+        ['50% بحد أقصى 400,000', '70% بحد أقصى 800,000', '80% بدون حد', '100% بحد أقصى 200,000'], 1),
+      q('الإهلاك المتسارع في RIS:',
+        ['10%', '15%', '20%', '25%'], 3),
+      q('الرسوم السنوية للمنطقة الحرة:',
+        ['0.1%', '0.5%', '1%', '2%'], 1),
+      q('حرية الصرف في المنطقة الحرة:',
+        ['ممنوعة', 'جزئية', 'كاملة', 'مخصصة للبنوك'], 2),
+      q('مدة الموافقة على المنطقة الحرة:',
+        ['10 سنوات', '15 سنة', '20 سنة', '25 سنة'], 1),
+      q('تمديد المنطقة الحرة:',
+        ['5 سنوات', '10 سنوات', '15 سنة', '20 سنة'], 1),
+      q('قانون الهيدروجين الأخضر:',
+        ['2020-019', '2022-037', '2024-037', '2025-006'], 2),
+      q('مدة الاتفاقية الإطارية للهيدروجين:',
+        ['سنة واحدة', 'سنتان', '3 سنوات', '5 سنوات'], 1),
+      q('مدة الاتفاقية الشاملة للهيدروجين:',
+        ['15 سنة', '25 سنة', '35 سنة', '50 سنة'], 2),
+      q('معدل الضريبة على الشركات للهيدروجين (R ≤ 1):',
+        ['10%', '15%', '20%', '25%'], 1),
+      q('معدل الضريبة على الشركات للمقاولين من الباطن في الهيدروجين:',
+        ['2% من رقم الأعمال', '4% من رقم الأعمال', '5% من رقم الأعمال', '10% من رقم الأعمال'], 1),
+      q('الضريبة على الدخل للهيدروجين:',
+        ['2%', '3%', '4%', '5%'], 2),
+      q('الاقتطاع من غير المقيمين للهيدروجين:',
+        ['2%', '3%', '4%', '5%'], 2),
+      q('الرسوم الجمركية للهيدروجين:',
+        ['2%', '3%', '4%', '5%'], 2),
+      q('الرسوم الجمركية المخفضة للهيدروجين:',
+        ['1%', '2%', '3%', '4%'], 1),
+      q('محاسبة الهيدروجين بالـ:',
+        ['أوقية', 'يورو أو دولار', 'عملة محلية', 'أي عملة'], 1),
+    ];
+
+    const fullControleur = controleurQuestions.slice(0, 100);
+    const fullInspecteur = inspecteurQuestions.slice(0, 100);
+
+    // -------------------- ÉTAT DE L'APPLICATION --------------------
+    let currentMode = 'controleur';
+    let currentQuestions = [...fullControleur];
+    let currentIndex = 0;
+    let userAnswers = [];
+    let questionStatus = [];
+    let score = 0;
+    let answered = false;
+
+    const questionZone = document.getElementById('questionZone');
+    const counterEl = document.getElementById('questionCounter');
+    const scoreEl = document.getElementById('scoreDisplay');
+    const progressFill = document.getElementById('progressFill');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultBtn = document.getElementById('resultBtn');
+    const modeControleur = document.getElementById('modeControleur');
+    const modeInspecteur = document.getElementById('modeInspecteur');
+
+    // -------------------- FONCTIONS UTILITAIRES --------------------
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function initGame() {
+      const pool = currentMode === 'controleur' ? [...fullControleur] : [...fullInspecteur];
+      currentQuestions = shuffleArray(pool);
+      currentIndex = 0;
+      userAnswers = new Array(currentQuestions.length).fill(-1);
+      questionStatus = new Array(currentQuestions.length).fill('unanswered');
+      score = 0;
+      answered = false;
+      renderQuestion();
+      updateInfo();
+    }
+
+    function updateInfo() {
+      const total = currentQuestions.length;
+      const num = currentIndex + 1;
+      counterEl.innerHTML = `<i class="far fa-file-alt"></i> سؤال ${num} / ${total}`;
+      const formattedScore = score.toFixed(2);
+      scoreEl.innerHTML = `<i class="fas fa-star"></i> ${formattedScore} نقطة`;
+      const progress = ((currentIndex + 1) / total) * 100;
+      progressFill.style.width = progress + '%';
+    }
+
+    function renderQuestion() {
+      if (currentIndex >= currentQuestions.length) {
+        questionZone.innerHTML = `
+          <div class="finish-message">
+            <i class="fas fa-check-circle"></i>
+            <h2>🎉 انتهى الاختبار!</h2>
+            <p style="margin-top: 10px; font-size: 1.2rem;">نتيجتك: <strong>${score.toFixed(2)}</strong> نقطة</p>
+            <p style="margin-top: 6px; color: #4b6589;">اضغط على "إعادة تعيين" للبدء من جديد</p>
+          </div>
+        `;
+        nextBtn.disabled = true;
+        updateInfo();
+        return;
+      }
+      nextBtn.disabled = false;
+
+      const q = currentQuestions[currentIndex];
+      const letters = ['أ', 'ب', 'ج', 'د'];
+      let html = `<div class="question-box"><div class="question-text">${q.question}</div><div class="options-grid">`;
+      q.options.forEach((opt, idx) => {
+        let extraClass = '';
+        let iconHtml = '';
+        const userChoice = userAnswers[currentIndex];
+        if (answered && userChoice !== -1) {
+          if (idx === q.correctIndex) {
+            extraClass = 'selected-correct';
+            iconHtml = `<i class="fas fa-check-circle icon-result" style="color:#16a34a;"></i>`;
+          } else if (idx === userChoice && idx !== q.correctIndex) {
+            extraClass = 'selected-wrong';
+            iconHtml = `<i class="fas fa-times-circle icon-result" style="color:#dc2626;"></i>`;
+          } else {
+            extraClass = 'disabled-opt';
+          }
+        } else if (answered && userChoice === -1) {
+          extraClass = 'disabled-opt';
+          if (idx === q.correctIndex) {
+            extraClass += ' selected-correct';
+            iconHtml = `<i class="fas fa-check-circle icon-result" style="color:#16a34a;"></i>`;
+          }
+        }
+        const disabledAttr = answered ? 'disabled-opt' : '';
+        html += `
+          <div class="option-item ${extraClass} ${disabledAttr}" data-optindex="${idx}" onclick="window.selectOption(${idx})">
+            <span class="letter">${letters[idx]}.</span>
+            <span class="text">${opt}</span>
+            ${iconHtml}
+          </div>
+        `;
+      });
+      html += `</div></div>`;
+      questionZone.innerHTML = html;
+      updateInfo();
+    }
+
+    window.selectOption = function(optIndex) {
+      if (answered) return;
+      const q = currentQuestions[currentIndex];
+      const isCorrect = (optIndex === q.correctIndex);
+      userAnswers[currentIndex] = optIndex;
+      if (isCorrect) {
+        questionStatus[currentIndex] = 'correct';
+        score += 0.125;
+      } else {
+        questionStatus[currentIndex] = 'wrong';
+        score -= 0.25;
+      }
+      score = Math.round(score * 1000) / 1000;
+      answered = true;
+      renderQuestion();
+    };
+
+    function goToNext() {
+      if (currentIndex < currentQuestions.length - 1) {
+        currentIndex++;
+        answered = false;
+        renderQuestion();
+        updateInfo();
+      } else {
+        currentIndex++;
+        answered = true;
+        renderQuestion();
+        updateInfo();
+      }
+    }
+
+    function resetGame() {
+      const pool = currentMode === 'controleur' ? [...fullControleur] : [...fullInspecteur];
+      currentQuestions = shuffleArray(pool);
+      currentIndex = 0;
+      userAnswers = new Array(currentQuestions.length).fill(-1);
+      questionStatus = new Array(currentQuestions.length).fill('unanswered');
+      score = 0;
+      answered = false;
+      nextBtn.disabled = false;
+      renderQuestion();
+      updateInfo();
+    }
+
+    function showResult() {
+      let correctCount = 0;
+      let wrongCount = 0;
+      let unansweredCount = 0;
+      for (let i = 0; i < questionStatus.length; i++) {
+        if (questionStatus[i] === 'correct') correctCount++;
+        else if (questionStatus[i] === 'wrong') wrongCount++;
+        else unansweredCount++;
+      }
+      const total = currentQuestions.length;
+      const percentage = ((correctCount / total) * 100).toFixed(1);
+      alert(
+        `📊 النتيجة التفصيلية\n\n` +
+        `✅ الإجابات الصحيحة: ${correctCount}\n` +
+        `❌ الإجابات الخاطئة: ${wrongCount}\n` +
+        `⬜ غير مجاب عنها: ${unansweredCount}\n` +
+        `📈 نسبة النجاح: ${percentage}%\n` +
+        `⭐ النقاط: ${score.toFixed(2)}`
+      );
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      if (mode === 'controleur') {
+        modeControleur.className = 'mode-btn active-controleur';
+        modeInspecteur.className = 'mode-btn';
+        document.getElementById('appContainer').style.borderLeft = '6px solid #6d28d9';
+      } else {
+        modeInspecteur.className = 'mode-btn active-inspecteur';
+        modeControleur.className = 'mode-btn';
+        document.getElementById('appContainer').style.borderLeft = '6px solid #0b6b9e';
+      }
+      resetGame();
+    }
+
+    // -------------------- ÉVÉNEMENTS --------------------
+    nextBtn.addEventListener('click', goToNext);
+    resetBtn.addEventListener('click', resetGame);
+    resultBtn.addEventListener('click', showResult);
+    modeControleur.addEventListener('click', function() { setMode('controleur'); });
+    modeInspecteur.addEventListener('click', function() { setMode('inspecteur'); });
+
+    // -------------------- LANCEMENT --------------------
+    setMode('controleur');
+  })();
+</script>
+</body>
+</html>
